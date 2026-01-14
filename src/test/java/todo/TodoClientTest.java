@@ -25,11 +25,18 @@ class TodoClientTest {
     }
 
     @Test
-    void shouldReturnTodoGivenValidId() throws Exception {
+    void shouldReturnTodoGivenValidId() throws Exception, TodoNotFoundException {
         var todo = client.getById(1);
 
         assertEquals(1, todo.userId());
         assertEquals(1, todo.id());
         assertFalse(todo.completed());
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionExceptionGivenInvalidId() throws Exception, TodoNotFoundException {
+        var todoNotFoundException = assertThrows(TodoNotFoundException.class, () -> client.getById(10000));
+        assertEquals("todo.Todo not found", todoNotFoundException.getMessage());
+
     }
 }
