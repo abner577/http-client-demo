@@ -34,6 +34,7 @@ class TodoClientTest {
         assertEquals(200, todos.size());
     }
 
+
     @Test
     void shouldReturnTodoGivenValidId() throws Exception, TodoNotFoundException {
         var todo = client.getById(validId);
@@ -42,6 +43,7 @@ class TodoClientTest {
         assertEquals(validId, todo.id());
         assertFalse(todo.completed());
     }
+
 
     @Test
     void shouldThrowNotFoundExceptionGivenInvalidId() {
@@ -74,6 +76,7 @@ class TodoClientTest {
         assertEquals(successfulRequestMessage + 200, response);
     }
 
+
     @Test
     void shouldThrowNotFoundExceptionGivenInvalidIdToUpdate() {
         var response = assertThrows(TodoNotFoundException.class, () -> client.updateTodo(todo, invalidId));
@@ -90,6 +93,7 @@ class TodoClientTest {
         var response = client.deleteTodo(validId);
         assertEquals(successfulRequestMessage + 200, response);
     }
+
 
     /**
      Would be the correct test for this scenario but for some reason the JSON placeholder API.
