@@ -1,4 +1,4 @@
-package todo;
+package todo.exception;
 
 public class TodoNotFoundException extends Throwable{
 

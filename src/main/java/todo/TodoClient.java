@@ -2,6 +2,7 @@ package todo;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import todo.exception.TodoNotFoundException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -47,7 +48,7 @@ public class TodoClient {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if(response.statusCode() == 404) {
-            throw new TodoNotFoundException("todo.Todo not found");
+            throw new TodoNotFoundException("Todo with id of: " + id + " not found");
         }
 
         return objectMapper.readValue(response.body(), Todo.class);
@@ -63,14 +64,14 @@ public class TodoClient {
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 201) {
-            throw new Exception("Something went wrong when create TODO with an id of: " + todo.id());
+            throw new Exception("Something went wrong when creating TODO with an id of: " + todo.id());
         }
 
         return ("Response status returned: " + response.statusCode());
     }
 
 
-    public String updateTodo(Todo todo, int id) throws Exception {
+    public String updateTodo(Todo todo, int id) throws Exception, TodoNotFoundException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_API_URL + "/" + id))
                 .PUT(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(todo)))
@@ -79,14 +80,14 @@ public class TodoClient {
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new Exception("Something went wrong when updating TODO with an id of: " + id);
+            throw new TodoNotFoundException("Todo with id of: " + id + " not found");
         }
 
         return ("Response status returned: " + response.statusCode());
     }
 
 
-    public String deleteTodo(int id) throws Exception {
+    public String deleteTodo(int id) throws Exception, TodoNotFoundException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_API_URL + "/" + id))
                 .DELETE()
@@ -95,7 +96,7 @@ public class TodoClient {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new Exception("Something went wrong when deleting TODO with an id of: " + id);
+            throw new TodoNotFoundException("Todo with id of: " + id + " not found");
         }
 
         return ("Response status returned: " + response.statusCode());
